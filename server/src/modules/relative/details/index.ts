@@ -1,22 +1,19 @@
-import { Income } from '@server/entities'
+import { Relative } from '@server/entities'
 import { authenticatedProcedure } from '@server/trpc/authenticatedProcedure'
-import { incomeSchema } from '../../../entities/income'
+import { relativeSchema } from '@server/entities/relative'
 
 export default authenticatedProcedure
   .input(
-    incomeSchema.pick({
+    relativeSchema.pick({
       id: true,
     })
   )
   .query(async ({ input: { id }, ctx: { db } }) => {
-    const incomes = (await db.getRepository(Income).find({
+    const relativeDetails = (await db.getRepository(Relative).findOne({
       where: {
-        user: {
-          id,
-        },
+        id,
       },
       relations: ['user'],
-    })) as Income[]
-
-    return incomes
+    })) as Relative
+    return relativeDetails
   })
